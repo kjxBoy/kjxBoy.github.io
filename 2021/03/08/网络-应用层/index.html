@@ -329,4 +329,46 @@
 <p><strong>TLS 1.2的连接 - ⑧</strong><br><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fa731244247f419ca5ba303068661c89~tplv-k3u1fbpfcp-watermark.image"></p>
 <p><strong>TLS 1.2的连接 - ⑨、⑩</strong><br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b100d385d7c848429affd6995b20ad39~tplv-k3u1fbpfcp-watermark.image"></p>
 <h4><span id="https-qing-qiu">HTTPS请求</span><a href="#https-qing-qiu" class="header-anchor">#</a></h4><p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3b3ad3f92a884ddc906ed7d38f0aee04~tplv-k3u1fbpfcp-watermark.image"></p>
+<h2><span id="http-2-0-3-0">HTTP 2.0 / 3.0</span><a href="#http-2-0-3-0" class="header-anchor">#</a></h2><h4><span id="http-xie-yi-de-bu-zu-http-1-1">HTTP 协议的不足(HTTP/1.1)</span><a href="#http-xie-yi-de-bu-zu-http-1-1" class="header-anchor">#</a></h4><p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/45e599e452e3436f9aa46e06c4b70ab8~tplv-k3u1fbpfcp-watermark.image"></p>
+<h4><span id="spdy">SPDY</span><a href="#spdy" class="header-anchor">#</a></h4><p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/45d965dfb90a479c9e01c380c35db3e6~tplv-k3u1fbpfcp-watermark.image"></p>
+<h4><span id="http-2">HTTP/2</span><a href="#http-2" class="header-anchor">#</a></h4><ul>
+<li><p>HTTP/2，于2015年5月以<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc7540">RFC 7540</a>正式发表 (根据W3Techs的数据，截至2019年6月，全球有36.5%的网站支持了HTTP/2)</p>
+</li>
+<li><p>HTTP/1.1 和 HTTP/2 速度对比<br><a target="_blank" rel="noopener" href="http://www.http2demo.io/">http://www.http2demo.io</a><br><a target="_blank" rel="noopener" href="https://http2.akamai.com/demo">https://http2.akamai.com/demo</a></p>
+</li>
+<li><p>HTTP/2 在底层传输做了很多的改进和优化，但在语意上完全与HTTP/1.1兼容</p>
+<ul>
+<li>比如请求方法(如GET、POST)、Status Code、各种Headers等都没有改变</li>
+<li>因此，要想升级到HTTP/2，开发者不需要修改任何代码，只需要升级服务器配置、升级浏览器</li>
+<li>iOS的网络请求由<code>NSURLConnection</code>替换到了支持HTTP/2的<code>NSURLSession</code></li>
+</ul>
+</li>
+</ul>
+<h5><span id="http-2-de-te-xing-er-jin-zhi-ge-shi">HTTP/2的特性 - 二进制格式</span><a href="#http-2-de-te-xing-er-jin-zhi-ge-shi" class="header-anchor">#</a></h5><p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ec5f35b8a95049bf8924a83e52421fcb~tplv-k3u1fbpfcp-watermark.image"></p>
+<ul>
+<li>HTTP/2采用二进制格式传输数据，而非HTTP/1.1的文本格式</li>
+<li>二进制格式在协议的解析和优化扩展上带来了更多的优势和可能</li>
+</ul>
+<h5><span id="yi-xie-ji-ben-gai-nian">一些基本概念</span><a href="#yi-xie-ji-ben-gai-nian" class="header-anchor">#</a></h5><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1d3951d937a142d1b37807f59d108589~tplv-k3u1fbpfcp-watermark.image"></p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/902547a36c25487b9f7991315c77aa87~tplv-k3u1fbpfcp-watermark.image"></p>
+<h5><span id="http-2-de-te-xing-duo-lu-fu-yong-multiplexing">HTTP/2的特性 - 多路复用(Multiplexing)</span><a href="#http-2-de-te-xing-duo-lu-fu-yong-multiplexing" class="header-anchor">#</a></h5><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/de47403895f846d993e740b56d7586fb~tplv-k3u1fbpfcp-watermark.image"></p>
+<p><strong>image Sprites</strong></p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3d760fb22ca543799cd3441756935cf4~tplv-k3u1fbpfcp-watermark.image"></p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a67513cf3f5149468986cfac38fa9592~tplv-k3u1fbpfcp-watermark.image"></p>
+<h5><span id="http-2-de-te-xing-you-xian-ji">HTTP/2的特性 - 优先级</span><a href="#http-2-de-te-xing-you-xian-ji" class="header-anchor">#</a></h5><p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a62f5b2931114291ab771188a91ed5d2~tplv-k3u1fbpfcp-watermark.image"></p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6d5efd2f2c7d4596819733c35680e001~tplv-k3u1fbpfcp-watermark.image"></p>
+<h5><span id="http-2-de-te-xing-tou-bu-ya-suo">HTTP/2的特性 - 头部压缩</span><a href="#http-2-de-te-xing-tou-bu-ya-suo" class="header-anchor">#</a></h5><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2324c0f1c41c4bb9aad20586cf4b3b2f~tplv-k3u1fbpfcp-watermark.image"></p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/56b62d0bd2234c06be89a56a89bc969a~tplv-k3u1fbpfcp-watermark.image"></p>
+<h5><span id="http-2-de-te-xing-fu-wu-qi-tui-song-sever-push">HTTP/2的特性 - 服务器推送（Sever Push）</span><a href="#http-2-de-te-xing-fu-wu-qi-tui-song-sever-push" class="header-anchor">#</a></h5><blockquote>
+<p>注意： 还是要客户端率先发起请求</p>
+</blockquote>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fb20cc8361734e6c983650ab9c32f226~tplv-k3u1fbpfcp-watermark.image"></p>
+<h5><span id="http-2-de-wen-ti-dui-tou-du-sai-head-of-line-blocking">HTTP/2 的问题 - 队头堵塞(head of line blocking)</span><a href="#http-2-de-wen-ti-dui-tou-du-sai-head-of-line-blocking" class="header-anchor">#</a></h5><p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5938a724211941d99aa2cf8efd3db272~tplv-k3u1fbpfcp-watermark.image"></p>
+<h5><span id="http-2-de-wen-ti-wo-shou-yan-chi">HTTP/2 的问题 - 握手延迟</span><a href="#http-2-de-wen-ti-wo-shou-yan-chi" class="header-anchor">#</a></h5><p>RTT (Round Trip Time)：往返时延，可以简单理解为通信一来一回的时间</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fb3e2d3048344682a039b7da348287f6~tplv-k3u1fbpfcp-watermark.image"></p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b2c5918dc1864a949432599ca8be1f89~tplv-k3u1fbpfcp-watermark.image"></p>
+<h4><span id="http-3">HTTP/3</span><a href="#http-3" class="header-anchor">#</a></h4><p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/60b83717fbfc42fdb0ea22e3755328e4~tplv-k3u1fbpfcp-watermark.image"></p>
+<h5><span id="http-3-yi-wen">HTTP/3 - 疑问</span><a href="#http-3-yi-wen" class="header-anchor">#</a></h5><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a3fcf61143704f3fb21ed0b3f7201b38~tplv-k3u1fbpfcp-watermark.image"></p>
+<h5><span id="http-3-de-te-xing-lian-jie-qian-yi">HTTP/3的特性 - 连接迁移</span><a href="#http-3-de-te-xing-lian-jie-qian-yi" class="header-anchor">#</a></h5><p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/178c84dbfe2745edaedfe91563bf7523~tplv-k3u1fbpfcp-watermark.image"></p>
+<h5><span id="http-3-de-wen-ti-cao-zuo-xi-tong-nei-he-cpu-fu-zai">HTTP/3的问题 - 操作系统内核、CPU负载</span><a href="#http-3-de-wen-ti-cao-zuo-xi-tong-nei-he-cpu-fu-zai" class="header-anchor">#</a></h5><p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/37c2b6acaa5f4871979a963e262781f5~tplv-k3u1fbpfcp-watermark.image"></p>
 </p></div><div class="share"><span>Share</span>&nbsp;<span class="soc"><a href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank" class="fa fa-bookmark"></a></span><span class="soc"><a href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));" class="fa fa-weibo"></a></span><span class="soc"><a target="_blank" rel="noopener" href="http://twitter.com/home?status=http://example.com/2021/03/08/网络-应用层/%20Hexo%20网络应用层" class="fa fa-twitter"></a></span></div><div class="pagination"><p class="clearfix"><span class="pre pagbuttons"><a role="navigation" href="/2021/03/08/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" title="网络安全"><i class="fa fa-angle-double-left"></i>&nbsp;Previous post: 网络安全</a></span></p></div></div></div></div><div class="visible-xs site-bottom-footer"><footer><p>&copy;&nbsp;2021&nbsp;<a target="_blank" href="http://example.com" rel="noopener noreferrer">John Doe</a></p><p>Theme&nbsp;<a target="_blank" href="https://github.com/SumiMakito/hexo-theme-typography" rel="noopener noreferrer">Typography</a>&nbsp;by&nbsp;<a target="_blank" href="https://www.keep.moe" rel="noopener noreferrer">Makito</a></p><p>Proudly published with&nbsp;<a target="_blank" href="https://hexo.io" rel="noopener noreferrer">Hexo</a></p></footer></div></div></div></div><script src="/js/jquery-3.1.0.min.js"></script><script src="/js/bootstrap.min.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script><script src="/js/google-analytics.js"></script><script src="/js/typography.js"></script></body></html>
