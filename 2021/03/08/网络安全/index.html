@@ -1,145 +1,71 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
+  <title>网络安全 [ Hexo ]</title>
   
-  <title>网络安全 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="[TOC] 网络通信中面临的4种安全威胁   截取：窃听通信内容  中断：中断网络通信  篡改：篡改通信内容  伪造：伪造通信内容 网络层 - ARP欺骗 ARP欺骗(ARP spoofing)，又称ARP毒化(ARP poisoning)、ARP病毒、ARP攻击  ARP欺骗可以造成的效果  可让攻击者获取局域网上的数据包甚至可篡改数据包 可让网络上特定电脑之间无法正常通信 (例如网络执法官这样">
-<meta property="og:type" content="article">
-<meta property="og:title" content="网络安全">
-<meta property="og:url" content="http://example.com/2021/03/08/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 网络通信中面临的4种安全威胁   截取：窃听通信内容  中断：中断网络通信  篡改：篡改通信内容  伪造：伪造通信内容 网络层 - ARP欺骗 ARP欺骗(ARP spoofing)，又称ARP毒化(ARP poisoning)、ARP病毒、ARP攻击  ARP欺骗可以造成的效果  可让攻击者获取局域网上的数据包甚至可篡改数据包 可让网络上特定电脑之间无法正常通信 (例如网络执法官这样">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ee47563f23034943b7beabce49a45ac7~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9d4ad1a6adb54dd890b19ad65de26de7~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9284c4d3d26d451e9d0a791adb7acfa9~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1f5d990aefe544d38481e035074a5c5e~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/44dd04a696ba4a95a7354d5aa09cd1e3~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d7e0a479be3546fb86481cb5a3a6218b~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6b0f0b38ad8241dfb636106611a42ee1~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c798115063224f2aa2d2a41712136120~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/316ef52a511f495a8c6a1d4c103b5ad5~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1f4c97731c8b4e4f8462f679e8eab039~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/04372da8657d4c5d8598de11c6c12637~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/202c92282e0b47968bf7dea364239e15~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eb2df6f2194d43e2a63bf54136b3a8a1~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3021349f06a046dcb8447f4ee4b23a83~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e39cd8fbd48841fd9c7c030800f33338~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/35ab790378314da19921f13a53210730~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8958d9ea1ad949b689ad0ff23f660229~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/387ef92ad0584bc0912b737ded06f957~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2e826b3156f84d99bec5dd2109aceb50~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8f38b2ddd14f4c06a0b529d3e18a80d6~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0940b8545a9a47b5881e0f64020f4ab6~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cda83cc99677434eba1e58d0fe520e55~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/73823d15635642e4b1d6d03631e47bd8~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9288d64e6b654db3b17daf560ea7bb1d~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4044b2cee8ea45d586f4d4199ea5c4c7~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/32751acad35047ecb55bfe1a7f349c68~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bd726f9190664087b5b88f72e510563a~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/869a194a83494bda8970fcfa9f4b84b4~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c02df9d47d27467391b7a95f2c5e62d6~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cd3c11bc9ab2457b8022bb96eae6ecc1~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9c2dc62987424a4481d846d89bdc6c34~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/055dfb9a552544989ca589fc9bc2f3a4~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/831b01d6b09645098602bb948c65ddb3~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cc3e4c233f87444e96f07589206d02d0~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fdcf3205786f4dc4be7844c2be3bb126~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1273f7513e1a4223947ad76586936bc9~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/88d59a504f444f539c7f3f274973e54b~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/338122cd7eec44778338d6800c50395f~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dc625a48c4124c8a9de630e24074e946~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4386431ec06348c1ad08f272964a847f~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/674c2399125146729677e6ed84567228~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0db39acb2176444491ac19ae7c26b509~tplv-k3u1fbpfcp-watermark.image">
-<meta property="og:image" content="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6eb13cfbb03346b5a83c29843668ebf0~tplv-k3u1fbpfcp-watermark.image">
-<meta property="article:published_time" content="2021-03-08T03:36:07.000Z">
-<meta property="article:modified_time" content="2021-03-08T03:37:41.145Z">
-<meta property="article:author" content="John Doe">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ee47563f23034943b7beabce49a45ac7~tplv-k3u1fbpfcp-watermark.image">
-  
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
+    <!-- stylesheets list from config.yml -->
     
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
-
-  
-  
-<link rel="stylesheet" href="/css/style.css">
-
-  
+      <link rel="stylesheet" href="/css/iLiKE.css">
     
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
-
   
+  
+  
+  <script src="//cdn1.lncld.net/static/js/3.1.1/av-min.js"></script>
+    <script id="leancloud">
+      AV.init({
+          appId: "6E5zTbTljdUbVW2WkXPsXGJk-gzGzoHsz",
+          appKey: "0vsyDKfNpeSECAI70J794ugv"
+      });
+    </script>
+
 <meta name="generator" content="Hexo 5.4.0"></head>
-
 <body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
+    <div class="header">
+        <div class="container">
+    <div class="menu">
+      <div class="menu-left">
+        <a href="/">
+          <img src="/favicon.ico"></img>
+        </a>
+      </div>
+      <div class="menu-right">
         
-          <a class="main-nav-link" href="/">Home</a>
+          
+          
+          
+          
+          
+          
+          <a href="/">Home</a>
         
-          <a class="main-nav-link" href="/archives">Archives</a>
+          
+          
+          
+          
+          
+          
+          <a href="/archives">Archives</a>
         
-      </nav>
-      <nav id="sub-nav">
+          
+          
+          
+          
+          
+          
+          <a href="/about">About</a>
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
       </div>
     </div>
-  </div>
-</header>
-
-      <div class="outer">
-        <section id="main"><article id="post-网络安全" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/03/08/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" class="article-date">
-  <time class="dt-published" datetime="2021-03-08T03:36:07.000Z" itemprop="datePublished">2021-03-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      网络安全
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>[TOC]</p>
+</div>
+    </div>
+    <div class="container">
+        <h1 class="post-title">网络安全</h1>
+<article class="post markdown-style">
+  <p>[TOC]</p>
 <p>网络通信中面临的4种安全威胁 </p>
 <ul>
 <li><code>截取</code>：窃听通信内容 </li>
@@ -328,113 +254,158 @@
 </ul>
 <h5 id="注册和下载"><a href="#注册和下载" class="headerlink" title="注册和下载"></a>注册和下载</h5><p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6eb13cfbb03346b5a83c29843668ebf0~tplv-k3u1fbpfcp-watermark.image"></p>
 
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/08/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" data-id="ckm01bchk0001ies60nxb85b2" data-title="网络安全" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-    
-<nav id="article-nav">
-  
-  
-    <a href="/2021/03/08/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Hello World</div>
-    </a>
-  
-</nav>
-
-  
 </article>
 
-
-</section>
-        
-          <aside id="sidebar">
-  
+    <div class="pagenator post-pagenator">
+    
     
 
-  
     
-
-  
+    <p>last update time 2021-03-08</p>
     
-  
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li></ul>
+        <a class="extend next post-next" href="/2021/03/08/hello-world/">next</a>
+    
     </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2021/03/08/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全</a>
-          </li>
-        
-          <li>
-            <a href="/2021/03/08/hello-world/">Hello World</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2021 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.4.1.min.js"></script>
-
-
-
-  
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
-  </div>
+    <div class="footer">
+        <div class="container">
+    <div class="social">
+	<ul class="social-list">
+		
+			
+				
+				
+				<li>
+					<a href="mailto:1178752402@qq.com" title="email" target="_blank">
+					<i class="fa fa-email"></i>
+					</a>
+				</li>
+			
+		
+			
+		
+			
+		
+			
+		
+			
+		
+			
+		
+			
+				
+				<li>
+					<a href="https://github.com/CaiChenghan" title="github" target="_self">
+					<i class="fa fa-github"></i>
+					</a>
+				</li>
+			
+		
+			
+		
+			
+		
+			
+		
+			
+				
+				<li>
+					<a href="https://www.jianshu.com/u/565c8e790605" title="jianshu" target="_self">
+					<i class="fa fa-jianshu"></i>
+					</a>
+				</li>
+			
+		
+			
+		
+			
+		
+			
+		
+	</ul>
+</div>
+    <div class="copyright">
+        <span>
+            
+            
+            
+                © John Doe 2017 - 2021
+            
+        </span>
+    </div>
+    <div class="power">
+        <span>
+            Powered by <a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> & <a target="_blank" rel="noopener" href="https://github.com/CaiChenghan/iLiKE">iLiKE Theme</a>
+        </span>
+    </div>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <!--page counter part-->
+<script>
+function addCount (Counter) {
+    url=$('.article-date').attr('href').trim();
+    title = $('.article-title').text().trim();
+    var query = new AV.Query(Counter);
+    //use url as unique idnetfication
+    query.equalTo("url",url);
+    query.find({
+        success: function(results) {
+            if (results.length>0) {
+                var counter=results[0];
+                counter.fetchWhenSave(true); //get recent result
+                counter.increment("time");
+                counter.save();
+            } else {
+                var newcounter=new Counter();
+                newcounter.set("title",title);
+                newcounter.set("url",url);
+                newcounter.set("time",1);
+                newcounter.save(null,{
+                    success: function(newcounter) {
+                        //alert('New object created');
+                    }, error: function(newcounter,error) {
+                        alert('Failed to create');
+                    }
+                })
+            }
+        },
+        error: function(error) {
+            //find null is not a error
+            alert('Error:'+error.code+" "+error.message);
+        }
+    });
+}
+$(function() {
+    var Counter=AV.Object.extend("Counter");
+    //only increse visit counting when intering a page
+    if ($('.article-title').length == 1) {
+       addCount(Counter);
+    }
+    var query=new AV.Query(Counter);
+    query.descending("time");
+    // the sum of popular posts
+    query.limit(10); 
+    query.find({
+        success: function(results) {
+                for(var i=0;i<results.length;i++) {
+                    var counter=results[i];
+                    title=counter.get("title");
+                    url=counter.get("url");
+                    time=counter.get("time");
+                    // add to the popularlist widget
+                    showcontent=title+" ("+time+")";
+                    //notice the "" in href
+                    $('.popularlist').append('<li><a href="'+url+'">'+showcontent+'</a></li>');
+                }
+            },
+        error: function(error) {
+            alert("Error:"+error.code+" "+error.message);
+        }
+    });
+});
+</script>
+</div>
+    </div>
 </body>
 </html>
