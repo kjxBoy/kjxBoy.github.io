@@ -1,0 +1,327 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author"><title>底层四：block · Hexo</title><meta name="description" content="转换解决方案：支持ARC、指定运行时系统版本，（在对象增加weak属性时候要调用运行时，转换要用运行时）比如
+xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc -fobjc-arc -fobjc-runtime=ios-8.0.0 main.m
+"><meta name="keywords" content=""><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/bootstrap.min.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="stylesheet" href="/css/style.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><meta name="generator" content="Hexo 5.4.0"></head><body><div id="stage" class="container"><div class="row"><div id="side-bar" class="col-sm-3 col-xs-12 side-container invisible"><div class="vertical-text site-title"><h3 tabindex="-1" class="site-title-small"><a href="/" class="a-title">生活</a></h3><h1 tabindex="-1" class="site-title-large"><a href="/" class="a-title">聊聊</a></h1><!--h6(onclick="triggerSiteNav()") Trigger--></div><br class="visible-lg visible-md visible-sm"><div id="site-nav" class="site-title-links"><ul><li><a href="/">Home</a></li><li><a href="/archives">Archive</a></li><li><a href="/tags">Tags</a></li><li><a href="/tags/index.html"></a></li><li class="soc"><a href="http://example.com/atom.xml" target="_blank" rel="noopener noreferrer"><i class="fa fa-rss">&nbsp;</i></a></li></ul><div class="visible-lg visible-md visible-sm site-nav-footer"><br class="site-nav-footer-br"><footer><p>&copy;&nbsp;2021&nbsp;<a target="_blank" href="http://example.com" rel="noopener noreferrer">John Doe</a></p><p>Theme&nbsp;<a target="_blank" href="https://github.com/SumiMakito/hexo-theme-typography" rel="noopener noreferrer">Typography</a>&nbsp;by&nbsp;<a target="_blank" href="https://www.keep.moe" rel="noopener noreferrer">Makito</a></p><p>Proudly published with&nbsp;<a target="_blank" href="https://hexo.io" rel="noopener noreferrer">Hexo</a></p></footer></div></div></div><div id="main-container" class="col-sm-9 col-xs-12 main-container invisible"><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post-container"><p class="post-title"><a>底层四：block</a></p><p class="post-meta"><span class="date meta-item">Posted at&nbsp;2021-03-08</span><span class="meta-item"><i class="fa fa-tag"></i><span>&nbsp;</span><a href="/tags/底层/" title="底层" class="a-tag">底层</a><span>&nbsp;</span></span></p><p class="post-abstract"><p>转换解决方案：支持<code>ARC</code>、指定<code>运行时系统版本</code>，（在对象增加weak属性时候要调用运行时，转换要用运行时）比如</p>
+<pre><code>xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc -fobjc-arc -fobjc-runtime=ios-8.0.0 main.m
+</code></pre>
+<p>普通转换</p>
+<pre><code>xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc main.m -o main.cpp
+</code></pre>
+<h2><span id="block-de-di-ceng-shi-xian">block 的底层实现</span><a href="#block-de-di-ceng-shi-xian" class="header-anchor">#</a></h2><p><strong>本质：block是封装了<code>函数调用</code>以及<code>函数调用环境</code>的OC<code>对象</code></strong> （有<code>isa</code>指针，是个对象，有函数调用环境&lt;函数地址、参数&gt;）</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">main_block_impl_0</span> &#123;</span></span><br><span class="line">  <span class="keyword">void</span> *isa;</span><br><span class="line">  <span class="keyword">int</span> Flags;</span><br><span class="line">  <span class="keyword">int</span> Reserved;</span><br><span class="line">  <span class="keyword">void</span> *FuncPtr;</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> __<span class="title">main_block_desc_0</span>* <span class="title">Desc</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> age;</span><br><span class="line">  </span><br><span class="line">  __main_block_impl_0(<span class="keyword">void</span> *fp, struct __main_block_desc_0 *desc, <span class="keyword">int</span> _age, <span class="keyword">int</span> flags=<span class="number">0</span>) : age(_age) &#123;</span><br><span class="line">    impl.isa = &amp;_NSConcreteStackBlock;</span><br><span class="line">    impl.Flags = flags;</span><br><span class="line">    impl.FuncPtr = fp;</span><br><span class="line">    Desc = desc;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>后面复习，可以自己先动手转换一个CPP代码，再对照下面的注释学习</strong></p>
+<p>Block 的定义以及实现代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> age = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">void</span> (^block)(<span class="keyword">void</span>) = ^&#123;</span><br><span class="line">      NSLog(@<span class="string">&quot;this is a block %d&quot;</span>,age);</span><br><span class="line">&#125;;</span><br><span class="line">age = <span class="number">10</span>;</span><br><span class="line"> block();</span><br></pre></td></tr></table></figure>
+
+<p>直接转换代码(去掉强制转换部分)</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> age = <span class="number">20</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 1. 通过构造函数创建</span></span><br><span class="line"><span class="comment">// 2.1 这里可以看出，age 之前只是作为值传递到block中，后面修改age的值，不会对block产生任何影响</span></span><br><span class="line"><span class="keyword">void</span>(*block)(<span class="keyword">void</span>) = </span><br><span class="line">   &amp;__main_block_impl_0(</span><br><span class="line">        __main_block_func_0,           </span><br><span class="line">        &amp;__main_block_desc_0_DATA, </span><br><span class="line">        age</span><br><span class="line">   );</span><br><span class="line"><span class="comment">// 2.2 age在这里修改，不会对block内部的age产生作用</span></span><br><span class="line">age = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. 这里直接使用__main_block_impl_0 类型的 block 去访问 __block_impl对象中的FuncPtr ，可以从内存的层面去考虑</span></span><br><span class="line"> block-&gt;FuncPtr(block);</span><br></pre></td></tr></table></figure>
+
+<p><strong>转换后的C++代码,分成三个部分</strong></p>
+<p><code>struct __block_impl</code></p>
+<p><code>struct __main_block_desc_0</code></p>
+<p><code>struct __main_block_impl_0</code> : Block的具体实现，包含<code>struct __block_impl</code> 和 <code>struct __main_block_desc_0</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">main_block_impl_0</span> &#123;</span></span><br><span class="line">    <span class="comment">// 注意这里不是指针，可以直接把结构体变量拿过来.</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> __<span class="title">block_impl</span> <span class="title">impl</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> __<span class="title">main_block_desc_0</span>* <span class="title">Desc</span>;</span></span><br><span class="line">    <span class="keyword">int</span> age;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>struct __block_impl</code>： 这里是Block的具体实现细节</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">block_impl</span> &#123;</span></span><br><span class="line">    <span class="keyword">void</span> *isa;</span><br><span class="line">    <span class="keyword">int</span> Flags;</span><br><span class="line">    <span class="keyword">int</span> Reserved;</span><br><span class="line">    <span class="comment">// block 的函数实现</span></span><br><span class="line">    <span class="keyword">void</span> *FuncPtr;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>struct __main_block_desc_0</code>: Block 的描述</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">main_block_desc_0</span> &#123;</span></span><br><span class="line">    <span class="keyword">size_t</span> reserved;</span><br><span class="line">    <span class="comment">// block的尺寸</span></span><br><span class="line">    <span class="keyword">size_t</span> Block_size;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>重写结构体</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里可以看出block的本质，是 __main_block_impl_0 结构体指针</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> __<span class="title">main_block_impl_0</span> *<span class="title">impBlock</span> =</span> (__bridge struct __main_block_impl_0 *)block;</span><br></pre></td></tr></table></figure>
+<p>通过断点可以获取到block的一些内部信息，通过断点在Block实现部分，反编译到汇编，看最上面的一行调用栈，可以得出结论，<code>__block_impl</code> 内的<code>void *FuncPtr</code> 是函数的实现<br><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/59d594a99dda4ab2bd6ce73d40a545af~tplv-k3u1fbpfcp-zoom-1.image" alt="屏幕快照 2018-11-21 20.18.08.png"></p>
+<p><strong>block底层实现图解（如果block捕获参数，会把对应的参数放到指定的位置上）</strong><br><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bccfb94af6d148d68f119061834f8bce~tplv-k3u1fbpfcp-zoom-1.image" alt="blcok底层实现.png"></p>
+<p><strong><code>这里的参数指的是捕获的变量</code></strong></p>
+<h2><span id="block-de-bian-liang-bu-huo-capture">block 的变量捕获( capture )</span><a href="#block-de-bian-liang-bu-huo-capture" class="header-anchor">#</a></h2><p><code>auto</code>: 自动变量，离开作用域自动销毁(无法定义全局变量)</p>
+<p><code>static</code>：修饰局部变量的时候，产生<code>静态局部变量</code></p>
+<p><code>静态局部变量</code>有以下特点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. 该变量在全局数据区分配内存；</span><br><span class="line"></span><br><span class="line">2. 静态局部变量在程序执行到该对象的声明处时被首次初始化，即以后的函数调用不再进行初始化；</span><br><span class="line"></span><br><span class="line">3. 静态局部变量一般在声明处初始化，如果没有显式初始化，会被程序自动初始化为0；</span><br><span class="line"></span><br><span class="line">4. 它始终驻留在全局数据区，直到程序运行结束。但其作用域为局部作用域，当定义它的函数或语句块结束时，其作用域随之结束；</span><br></pre></td></tr></table></figure>
+
+<p>应用</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    fn();</span><br><span class="line">    fn();</span><br><span class="line">    fn();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">fn</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> n = <span class="number">10</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d&quot;</span>, n);</span><br><span class="line">    n++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<table>
+<thead>
+<tr>
+<th>变量类型</th>
+<th>捕获到block内部</th>
+<th>访问方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>局部变量 <code>auto类型</code></td>
+<td><code>True</code></td>
+<td>值传递</td>
+</tr>
+<tr>
+<td>局部变量 <code>static类型</code></td>
+<td><code>True</code></td>
+<td>指针传递</td>
+</tr>
+<tr>
+<td>全局变量</td>
+<td><code>false</code></td>
+<td>直接访问</td>
+</tr>
+</tbody></table>
+<p><strong>局部变量是跨函数访问，肯定要进行捕获,全局变量是谁都可以访问，不需要捕获</strong></p>
+<blockquote>
+<p>原因：</p>
+</blockquote>
+<p><strong><code>局部变量传递原因：</code></strong> <code>auto</code>变量出了作用域就进行了释放，这个时候<code>block</code>内要访问这个变量，就必须进行值的捕获，否则会造成坏内存访问。而<code>static</code>始终驻留在<code>全局数据区</code>，直到程序运行结束。</p>
+<p><strong><code>全局变量不会捕获原因：</code></strong> 静态局部变量虽然不会销毁，但是静态局部变量作用域会进行销毁，导致外部无法访问，所以捕获指向静态局部变量的指针。而全局变量作用域也不会进行销毁，可以直接访问，不需要捕获。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">auto <span class="keyword">int</span> age = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> height = <span class="number">30</span>;</span><br><span class="line"><span class="keyword">void</span>(^block)(<span class="keyword">void</span>) = ^&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;age = %d, height = %d&quot;</span>,age, height);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">age = <span class="number">10</span>;</span><br><span class="line">height = <span class="number">10</span>;</span><br><span class="line">block();</span><br></pre></td></tr></table></figure>
+<p>转化后</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">main_block_impl_0</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> __<span class="title">block_impl</span> <span class="title">impl</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> __<span class="title">main_block_desc_0</span>* <span class="title">Desc</span>;</span></span><br><span class="line">  <span class="keyword">int</span> age;</span><br><span class="line">  <span class="keyword">int</span> *height;</span><br><span class="line">  <span class="comment">// 看出赋值过程 age(_age), height(_height)，因为是指针传递，所以Block内部捕获到的值会跟随改变</span></span><br><span class="line">  __main_block_impl_0(<span class="keyword">void</span> *fp, struct __main_block_desc_0 *desc, <span class="keyword">int</span> _age, <span class="keyword">int</span> *_height, <span class="keyword">int</span> flags=<span class="number">0</span>) : age(_age), height(_height)</span><br><span class="line">  ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>全局变量</strong></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> age_ = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> height_ = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</span><br><span class="line">    <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">        <span class="keyword">void</span> (^block)(<span class="keyword">void</span>) = ^&#123;</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;age is %d, height is %d&quot;</span>, age_, height_);</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        age_ = <span class="number">20</span>;</span><br><span class="line">        height_ = <span class="number">20</span>;</span><br><span class="line"></span><br><span class="line">        block();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> age_ = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> height_ = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> (*block)(<span class="keyword">void</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 并没有捕获全局变量，不需要捕获</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">main_block_impl_0</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> __<span class="title">block_impl</span> <span class="title">impl</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> __<span class="title">main_block_desc_0</span>* <span class="title">Desc</span>;</span></span><br><span class="line">  __main_block_impl_0(<span class="keyword">void</span> *fp, struct __test_block_desc_0 *desc, <span class="keyword">int</span> _a, <span class="keyword">int</span> *_b, <span class="keyword">int</span> flags=<span class="number">0</span>) : a(_a), b(_b) &#123;</span><br><span class="line">    impl.isa = &amp;_NSConcreteStackBlock;</span><br><span class="line">    impl.Flags = flags;</span><br><span class="line">    impl.FuncPtr = fp;</span><br><span class="line">    Desc = desc;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2><span id="block-de-lei-xing">block 的类型</span><a href="#block-de-lei-xing" class="header-anchor">#</a></h2><p><strong><code>block</code>有3种类型，可以通过调用<code>class</code>方法或者<code>isa</code>指针查看具体类型，最终都是继承自<code>NSBlock</code>类型</strong></p>
+<blockquote>
+<ul>
+<li><strong>NSGlobalBlock</strong> （ _NSConcreteGlobalBlock ）</li>
+<li><strong>NSStackBlock</strong> （ _NSConcreteStackBlock ）</li>
+<li><strong>NSMallocBlock</strong> （ _NSConcreteMallocBlock ）</li>
+</ul>
+</blockquote>
+<p>在<code>ARC</code>环境下验证</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> age = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">void</span>(^block)(<span class="keyword">void</span>) = ^&#123;</span><br><span class="line">    NSLog(@<span class="string">&quot;one = %d&quot;</span>,age);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span>(^block1)(<span class="keyword">void</span>) = ^&#123;</span><br><span class="line">    NSLog(@<span class="string">&quot;two&quot;</span>);</span><br><span class="line">&#125;;</span><br><span class="line">        </span><br><span class="line">NSLog(@<span class="string">&quot;\n %@ \n %@ \n %@ \n&quot;</span>, [block class],[block1 class], [^&#123;</span><br><span class="line">    NSLog(@<span class="string">&quot;one = %d&quot;</span>,age);</span><br><span class="line">&#125; class]);</span><br></pre></td></tr></table></figure>
+<p>打印结果</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">__NSMallocBlock__ </span><br><span class="line">__NSGlobalBlock__ </span><br><span class="line">__NSStackBlock__</span><br></pre></td></tr></table></figure>
+
+<p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/56cff7addb0d4aeca99ecdbc3864616b~tplv-k3u1fbpfcp-zoom-1.image" alt="block的类型.png"></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> height = <span class="number">20</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[])</span> </span>&#123;</span><br><span class="line">    @autoreleasepool &#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> age = <span class="number">10</span>;</span><br><span class="line">        </span><br><span class="line">        NSLog(@<span class="string">&quot;数据段 - %p&quot;</span>, &amp;height);</span><br><span class="line">        NSLog(@<span class="string">&quot;栈段 - %p&quot;</span>, &amp;age);</span><br><span class="line">        NSLog(@<span class="string">&quot;堆段 - %p&quot;</span>, [[NSObject alloc] init]);</span><br><span class="line">        <span class="comment">// 猜测某个类型在哪个字段？</span></span><br><span class="line">        NSLog(@<span class="string">&quot;%p&quot;</span>, [JXPerson class]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>打印结果如下 </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> 数据段 - <span class="number">0x1000011d0</span></span><br><span class="line"> 栈段 - <span class="number">0x7ffeefbff54c</span></span><br><span class="line"> 堆段 - <span class="number">0x101807ae0</span></span><br><span class="line"> <span class="comment">// 可以推测出类对象保存在数据区域</span></span><br><span class="line">---- <span class="number">0x1000011a8</span></span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li><p><code>程序区域(代码段)</code>一般放代码，包括<code>main函数</code>这些</p>
+</li>
+<li><p><code>数据区域</code>一般放<code>全局变量</code></p>
+</li>
+<li><p><code>堆</code>段放<code>alloc</code>出来的对象： 动态分配内存，要程序猿自己管理内存（申请、释放）</p>
+</li>
+<li><p><code>栈</code>空间一般放局部变量，自己分配、释放</p>
+</li>
+</ul>
+<p><strong><code>block</code> 类型的判断标准（MRC）</strong></p>
+<table>
+<thead>
+<tr>
+<th>block类型</th>
+<th>环境</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>__NSGlobalBlock__</code></td>
+<td>没有访问auto变量</td>
+</tr>
+<tr>
+<td><code>__NSStackBlock__</code></td>
+<td>访问了auto变量</td>
+</tr>
+<tr>
+<td><code>__NSMallocBlock__</code></td>
+<td><code>__NSStackBlock__</code>调用了copy</td>
+</tr>
+</tbody></table>
+<p>在 MRC 环境下验证</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span>(^block)(<span class="keyword">void</span>) = ^&#123;</span><br><span class="line">    NSLog(@<span class="string">&quot;one&quot;</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> age = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">void</span>(^block2)(<span class="keyword">void</span>) = ^&#123;</span><br><span class="line">    NSLog(@<span class="string">&quot;%d&quot;</span>,age);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Block block3 = [block2 copy];</span><br><span class="line"></span><br><span class="line">NSLog(@<span class="string">&quot;\n%@ \n%@ \n%@&quot;</span>, [block class], [block2 class], [block3 class]);</span><br></pre></td></tr></table></figure>
+
+<h3><span id="block-de-copy">block的copy</span><a href="#block-de-copy" class="header-anchor">#</a></h3><p><strong>每一种类型的<code>block</code>调用<code>copy</code>后的结果如下所示</strong></p>
+<table>
+<thead>
+<tr>
+<th>Block的类</th>
+<th>副本源的配置存储域</th>
+<th>复制效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>_NSConcreteStackBlock</td>
+<td>栈</td>
+<td>从栈复制到堆</td>
+</tr>
+<tr>
+<td>_NSConcreteGlobalBlock</td>
+<td>程序的数据区域</td>
+<td>什么也不做</td>
+</tr>
+<tr>
+<td>_NSConcreteMallocBlock</td>
+<td>堆</td>
+<td>引用计数增加</td>
+</tr>
+</tbody></table>
+<p><strong>在<code>ARC</code>环境下，编译器会根据情况自动将栈上的<code>block</code>复制到堆上，比如以下情况(自动调用一次<code>copy</code>)</strong></p>
+<blockquote>
+<ul>
+<li><code>block</code>作为函数返回值时 (masory)</li>
+<li>将<code>block</code>赋值给<code>__strong</code>指针时 (创建的对象默认就是<code>强指针</code>指向的，包括局部变量)</li>
+<li><code>block</code>作为<code>Cocoa API</code>中方法名含有<code>usingBlock</code>的方法参数时(数组遍历)</li>
+<li><code>block</code>作为<code>GCD API</code>的方法参数时</li>
+</ul>
+</blockquote>
+<p><strong><code>MRC</code>下<code>block</code>属性的建议写法</strong></p>
+<pre><code>@property (copy, nonatomic) void (^block)(void);
+</code></pre>
+<p><strong><code>ARC</code>下<code>block</code>属性的建议写法(在<code>AR</code>C情况下会自动复制<code>strong</code>和<code>copy</code>两种类型引用效果相同)</strong>,</p>
+<pre><code>@property (strong, nonatomic) void (^block)(void);
+@property (copy, nonatomic) void (^block)(void);
+</code></pre>
+<h2><span id="dui-xiang-lei-xing-de-auto-bian-liang">对象类型的auto变量</span><a href="#dui-xiang-lei-xing-de-auto-bian-liang" class="header-anchor">#</a></h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 将person对象捕获</span></span><br><span class="line">JXPerson *person = [[JXPerson alloc] init];</span><br><span class="line">person.age = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">JXBlock block= ^&#123;</span><br><span class="line">    NSLog(@<span class="string">&quot;------%d&quot;</span>, person.age);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>转换为CPP代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">main_block_impl_0</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> __<span class="title">block_impl</span> <span class="title">impl</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> __<span class="title">main_block_desc_0</span>* <span class="title">Desc</span>;</span></span><br><span class="line">  <span class="comment">// 捕获的person变量是通过auto修饰的，如果通过static修饰，会变成 JXPerson ** person</span></span><br><span class="line">  JXPerson *person;</span><br><span class="line">  __main_block_impl_0(<span class="keyword">void</span> *fp, struct __main_block_desc_0 *desc, JXPerson *_person, <span class="keyword">int</span> flags=<span class="number">0</span>) : person(_person) &#123;</span><br><span class="line">    ... ...</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这里将带有<code>weak</code>的变量，转换成<code>CPP</code>代码</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">__weak <span class="type">JXPerson</span> <span class="operator">*</span>weakPerson <span class="operator">=</span> person;</span><br><span class="line">block<span class="operator">=</span> <span class="operator">^</span>&#123;</span><br><span class="line">    <span class="type">NSLog</span>(@<span class="string">&quot;------%d&quot;</span>, weakPerson.age);</span><br><span class="line">&#125; ;</span><br></pre></td></tr></table></figure>
+<p>转换代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">main_block_impl_0</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> __<span class="title">block_impl</span> <span class="title">impl</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> __<span class="title">main_block_desc_0</span>* <span class="title">Desc</span>;</span></span><br><span class="line">  <span class="comment">// 注意这里会有一个__weak 修饰，同外面 对象类型的auto变量的修饰符 相同</span></span><br><span class="line">  JXPerson *__weak weakPerson;</span><br><span class="line">  __main_block_impl_0(<span class="keyword">void</span> *fp, struct __main_block_desc_0 *desc, JXPerson *__weak _weakPerson, <span class="keyword">int</span> flags=<span class="number">0</span>) : weakPerson(_weakPerson) &#123;</span><br><span class="line">    ... ...</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>将带有对象类型的<code>auto</code>变量的<code>block</code>，转换成<code>CPP</code>代码，可以看出结构体<code>__main_block_desc_0</code> 会有所改变</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> __<span class="title">main_block_desc_0</span> &#123;</span></span><br><span class="line">  <span class="keyword">size_t</span> reserved;</span><br><span class="line">  <span class="keyword">size_t</span> Block_size;</span><br><span class="line">  <span class="comment">// 多出两个函数指针</span></span><br><span class="line">  <span class="keyword">void</span> (*copy)(struct __main_block_impl_0*, struct __main_block_impl_0*);</span><br><span class="line">  <span class="keyword">void</span> (*dispose)(struct __main_block_impl_0*);</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<p><strong>观察到 <code>__main_block_desc_0</code> 结构体多出两个函数指针，对应两个函数如下</strong></p>
+<p>如果<code>Block</code>被拷贝到堆上，会调用内部的<code>__main_block_copy_0</code> 函数(以下简称<code>copy</code>函数)，<code>copy</code>函数会调用 <code>_Block_object_assign</code> 函数, 会根据<code>auto</code>变量的修饰符<code>（__strong、__weak、__unsafe_unretained）</code>做出相应的操作，引用计数加一（<code>__strong</code>），引用计数不改变（<code>__weak、__unsafe_unretained</code>）</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __main_block_copy_0(struct __main_block_impl_0*dst, struct __main_block_impl_0*src) &#123;</span><br><span class="line"><span class="comment">//调用 _Block_object_assign 函数</span></span><br><span class="line">_Block_object_assign((<span class="keyword">void</span>*)&amp;dst-&gt;weakPerson, (<span class="keyword">void</span>*)src-&gt;weakPerson, <span class="number">3</span><span class="comment">/*BLOCK_FIELD_IS_OBJECT*/</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果<code>block</code>从堆上移除,会调用<code>block</code>内部的<code>dispose</code>函数，<code>dispose</code>函数内部会调用<code>_Block_object_dispose</code>函数，<code>_Block_object_dispose</code>函数会自动释放引用的<code>auto</code>变量（类似于release，引用计数减一）</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __main_block_dispose_0(struct __main_block_impl_0*src) &#123;</span><br><span class="line"></span><br><span class="line">_Block_object_dispose((<span class="keyword">void</span>*)src-&gt;weakPerson, <span class="number">3</span><span class="comment">/*BLOCK_FIELD_IS_OBJECT*/</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><strong>当<code>block</code>内部访问了<code>对象类型</code>的<code>auto</code>变量时</strong></p>
+<ul>
+<li>无论<code>MRC</code>或者<code>ARC</code>，如果<code>block</code>是在栈上，将不会对<code>auto变量</code>产生强引用 &lt; **<code>栈空间的Block没法保住对象类型的auto变量的命</code>** &gt; (在<code>MRC</code>环境通过<code>栈block</code>来进行验证，或者在<code>ARC</code>环境通过没有强引用指针指向的<code>Block</code>来验证)</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//MRC 环境</span></span><br><span class="line"><span class="type">JXBlock</span> block;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">JXPerson</span> <span class="operator">*</span>person <span class="operator">=</span> [[<span class="type">JXPerson</span> alloc] <span class="keyword">init</span>];</span><br><span class="line">    person.age <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    block<span class="operator">=</span> <span class="operator">^</span>&#123;</span><br><span class="line">        <span class="type">NSLog</span>(@<span class="string">&quot;------%d&quot;</span>, person.age);</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">// 如果调用了copy，将block转换为__NSMallocBlock__,将保住person的命</span></span><br><span class="line">    <span class="comment">// block= [^&#123;</span></span><br><span class="line">    <span class="comment">//    NSLog(@&quot;------%d&quot;, person.age);</span></span><br><span class="line">    <span class="comment">// &#125; copy];</span></span><br><span class="line">    </span><br><span class="line">    [person release];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">NSLog</span>(@<span class="string">&quot;-------&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>NSLog(@&quot;-------&quot;);</code> 处打断点，重写<code>JXPerson</code>的<code>dealloc</code>方法，打印结果如下： </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 重写dealloc的打印信息</span></span><br><span class="line">deallOC <span class="operator">-</span> <span class="type">JXPerson</span> 释放</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>调用时机</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>copy函数</td>
+<td>栈上的Block复制到堆时</td>
+</tr>
+<tr>
+<td>dispose函数</td>
+<td>堆上的Block被废弃时</td>
+</tr>
+</tbody></table>
+<p><strong><code>总结：</code></strong></p>
+<blockquote>
+<p>如果<code>Block</code>是在<code>栈</code>空间，不会对内部的<code>对象类型的auto变量</code>产生强引用. 一旦<code>Block</code>在<code>堆空间</code>，会根据变量自身的修饰符(强引用或者弱引用)来进行相应的引用操作。</p>
+</blockquote>
+<h2><span id="block">__block</span><a href="#block" class="header-anchor">#</a></h2><p><strong>block 无法修改局部变量，转换成CPP代码可以看到本质，就是两者并不在同一个函数内，如果想要修改可以使用<code>静态局部变量</code>(通过指针引用，可修改) 或者使用<code>__block</code></strong></p>
+<pre><code>1.__block可以用于解决block内部无法修改auto变量值的问题
+2.__block不能修饰全局变量、静态变量（static）
+</code></pre>
+<p><strong>编译器会将__block变量包装成一个<code>对象</code></strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">__block <span class="keyword">int</span> age = <span class="number">10</span>;</span><br><span class="line"> <span class="keyword">void</span>(^myBlock)(<span class="keyword">void</span>) = ^&#123;</span><br><span class="line">        NSLog(@<span class="string">&quot;%d&quot;</span>,age);</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>转换： 这里是<code>block</code>所转换的结构体，可以看出对应的<code>age</code>是一个指向<code>__Block_byref_age_0</code> 结构体的指针.从构造函数的赋值 <code>age(_age-&gt;__forwarding)</code> 可以看出最后是通过结构体的<code>fowarding</code>指针进行的</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">main_block_impl_0</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> __<span class="title">block_impl</span> <span class="title">impl</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> __<span class="title">main_block_desc_0</span>* <span class="title">Desc</span>;</span></span><br><span class="line">    __Block_byref_age_0 *age; <span class="comment">// by ref</span></span><br><span class="line">     __main_block_impl_0(</span><br><span class="line">            <span class="keyword">void</span> *fp, </span><br><span class="line">            struct __main_block_desc_0 *desc, </span><br><span class="line">            __Block_byref_age_0 *_age, </span><br><span class="line">            <span class="keyword">int</span> flags=<span class="number">0</span>) : age(_age-&gt;__forwarding) &#123;</span><br><span class="line">             ... ...</span><br><span class="line">         &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>我们找到 <code>__Block_byref_age_0</code> 的定义后发现，真实<code>age</code>的值，被放到结构体中</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// __ block 会单独生成一个结构体</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">Block_byref_age_0</span> &#123;</span></span><br><span class="line">   <span class="comment">// 因为包含isa，所以__block 相当于一个对象</span></span><br><span class="line">    <span class="keyword">void</span> *__isa; </span><br><span class="line">   __Block_byref_age_0 *__forwarding;</span><br><span class="line">   <span class="keyword">int</span> __flags;</span><br><span class="line">   <span class="keyword">int</span> __size;</span><br><span class="line">   <span class="keyword">int</span> age;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>然后找到函数中 <code>__block int age = 10;</code> 转换的代码.我们发现了如下的一个结构体赋值过程，<code>10</code>被赋值给结构体内的<code>age</code>，而<code>__forwarding</code>指向自身</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">__Block_byref_age_0 age = &#123;</span><br><span class="line">            <span class="number">0</span>,</span><br><span class="line">            &amp;age, <span class="comment">// __Block_byref_age_0 age 指向自己的指针</span></span><br><span class="line">            <span class="number">0</span>,</span><br><span class="line">            <span class="keyword">sizeof</span>(__Block_byref_age_0),</span><br><span class="line">            <span class="number">10</span></span><br><span class="line">        &#125;;</span><br></pre></td></tr></table></figure>
+
+
+<p>参考题</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> (^block)(<span class="keyword">void</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> test() &#123;</span><br><span class="line">    </span><br><span class="line">    __block <span class="keyword">int</span> age = <span class="number">10</span>;</span><br><span class="line">    </span><br><span class="line">    block = ^&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;%d&quot;</span>,age);</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    age = <span class="number">20</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</span><br><span class="line">    <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">        test();</span><br><span class="line">        </span><br><span class="line">        block();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 打印结果是20</span></span><br></pre></td></tr></table></figure>
+<p>打印结果是<code>20</code>，因为<code>_ _block</code>是生成了一个对象，拷贝到block内部，对象修改属性会生效</p>
+<h3><span id="nei-cun-guan-li">内存管理</span><a href="#nei-cun-guan-li" class="header-anchor">#</a></h3><h4><span id="block-xiu-gai-pu-tong-bian-liang"><code>__block</code> 修改普通变量</span><a href="#block-xiu-gai-pu-tong-bian-liang" class="header-anchor">#</a></h4><p>我们可以看到刚刚在<code>block</code>中引用带有<code>__block</code>的代码，转换后的代码描述部分如下，生成了管理对象的函数<code>copy</code>和<code>dispose</code>，原因是因为<code>__block</code>相当于一个对象，在<code>block</code>内部,需要<code>block</code>进行内存管理</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> __<span class="title">main_block_desc_0</span> &#123;</span></span><br><span class="line">  <span class="keyword">size_t</span> reserved;</span><br><span class="line">  <span class="keyword">size_t</span> Block_size;</span><br><span class="line">  <span class="keyword">void</span> (*copy)(struct __main_block_impl_0*, struct __main_block_impl_0*);</span><br><span class="line">  <span class="keyword">void</span> (*dispose)(struct __main_block_impl_0*);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>当<code>block</code>在栈上时，并不会对<code>__block变量</code>产生强引用(可以通过MRC，使用<code>栈空间block</code>验证)</strong>   </p>
+<p><strong>当block被copy到堆时</strong></p>
+<blockquote>
+<ul>
+<li>会调用<code>block</code>内部的<code>copy</code>函数</li>
+<li><code>copy</code>函数内部会调用<code>_Block_object_assign</code>函数</li>
+<li><code>_Block_object_assign</code>函数会对<code>__block</code>变量形成强引用（<code>retain</code>）</li>
+</ul>
+</blockquote>
+<p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/33b90b44774b45a9ae97ab1904dbef30~tplv-k3u1fbpfcp-zoom-1.image" alt="__block copy.png"></p>
+<p><strong>当block从堆中移除时</strong></p>
+<blockquote>
+<ul>
+<li>会调用block内部的dispose函数</li>
+<li>dispose函数内部会调用_Block_object_dispose函数</li>
+<li>_Block_object_dispose函数会自动释放引用的__block变量（release）</li>
+</ul>
+</blockquote>
+<p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fd38444272434307a93a6dfea8b0888e~tplv-k3u1fbpfcp-zoom-1.image" alt="__block dispose.png"></p>
+<p><strong><code>总结：对象类型的auto变量和__block修饰的变量</code>的相同点和区别</strong></p>
+<p><strong>相同点</strong></p>
+<blockquote>
+<ul>
+<li>当<code>Block</code>在栈上时，不会对<code>auto对象类型</code>、<code>__block修饰的变量</code>产生强引用</li>
+<li>当<code>Block</code>拷贝到堆上时，会对 <code>auto对象类型</code>、<code>__block修饰的变量</code> 调用<code>copy</code>函数。产生强引用（引用计数加一（<code>__strong</code>），引用计数不改变（<code>__weak、__unsafe_unretained</code>））</li>
+<li>如果<code>Block</code>从堆中移除，会对 <code>auto对象类型</code>、<code>__block修饰的变量</code> 调用<code>dispose</code>函数。（引用计数减一）</li>
+</ul>
+</blockquote>
+<p><strong>区别</strong></p>
+<blockquote>
+<ul>
+<li>使用<code>__block</code>修饰的基本数据类型在<code>block</code>中肯定是强引用，基本数据类型没法使用 <code>__weak</code> 修饰， 但是使用<code>__block</code>修饰的对象如果使用了<code>weak</code>、<code>unsafe_retain</code>的话，会是弱引用，对象使用了<code>strong</code>的话，就是强引用</li>
+</ul>
+</blockquote>
+<h3><span id="forwarding-zhi-zhen">__forwarding 指针</span><a href="#forwarding-zhi-zhen" class="header-anchor">#</a></h3><p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a7e2a26cc59f459d9e321398d5c2a394~tplv-k3u1fbpfcp-zoom-1.image" alt="__block forwarding指针.png"></p>
+<h4><span id="block-xiu-shi-de-dui-xiang-lei-xing"><code>__block</code> 修饰的对象类型</span><a href="#block-xiu-shi-de-dui-xiang-lei-xing" class="header-anchor">#</a></h4><p>跟修饰基本数据类型一样，也是生成一个新的对象，新的对象里面有<code>__block</code>修饰的参数</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">__block <span class="type">JXPerson</span> <span class="operator">*</span>person <span class="operator">=</span> [[<span class="type">JXPerson</span> alloc] <span class="keyword">init</span>];</span><br><span class="line">void(<span class="operator">^</span>myBlock)(void) <span class="operator">=</span> <span class="operator">^</span>&#123;</span><br><span class="line">    <span class="type">NSLog</span>(@<span class="string">&quot;%@&quot;</span>,person);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>转换后的代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">main_block_impl_0</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> __<span class="title">block_impl</span> <span class="title">impl</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> __<span class="title">main_block_desc_0</span>* <span class="title">Desc</span>;</span></span><br><span class="line">  __Block_byref_person_0 *person; <span class="comment">// by ref</span></span><br><span class="line">  __main_block_impl_0(<span class="keyword">void</span> *fp, struct __main_block_desc_0 *desc, __Block_byref_person_0 *_person, <span class="keyword">int</span> flags=<span class="number">0</span>) : person(_person-&gt;__forwarding) &#123;</span><br><span class="line">    ... ... </span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>__Block_byref_person_0 </code>是一个单独的结构体， 当<code>__Block_byref_person_0</code> 被拷贝到堆上时，会调用 <code>__Block_byref_id_object_copy</code> 函数，将对应的<code>person</code>调用<code>_Block_object_assign</code> 方法，相反释放的时候，调用<code>dipose</code>函数 (在MRC情况下，不会对<code>person</code>形成强引用，肯定是弱引用)</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">Block_byref_person_0</span> &#123;</span></span><br><span class="line">  <span class="keyword">void</span> *__isa; <span class="comment">// 8</span></span><br><span class="line">__Block_byref_person_0 *__forwarding; <span class="comment">// 8</span></span><br><span class="line"> <span class="keyword">int</span> __flags;  <span class="comment">// 4</span></span><br><span class="line"> <span class="keyword">int</span> __size;   <span class="comment">// 4</span></span><br><span class="line"> <span class="comment">// 比基本数据类型，对了两个函数指针</span></span><br><span class="line"> <span class="keyword">void</span> (*__Block_byref_id_object_copy)(<span class="keyword">void</span>*, <span class="keyword">void</span>*); <span class="comment">// 8</span></span><br><span class="line"> <span class="keyword">void</span> (*__Block_byref_id_object_dispose)(<span class="keyword">void</span>*);  <span class="comment">// 8</span></span><br><span class="line"> <span class="comment">// 这里是对应的对象变量(比基本数据类型多了类型修饰符)</span></span><br><span class="line"> JXPerson *__strong person;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>通过查看main函数的CPP源码，可以拿到<code>__Block_byref_person_0</code> 对应的两个函数指针对应的函数实现<code>__Block_byref_id_object_copy_131</code>和<code>__Block_byref_id_object_dispose_131</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __Block_byref_id_object_copy_131(<span class="keyword">void</span> *dst, <span class="keyword">void</span> *src) &#123;</span><br><span class="line"><span class="comment">// 这里的dst指的是结构体的首地址，+40 正好对应到  JXPerson *__strong person; 的位置</span></span><br><span class="line"><span class="comment">// 所以这里的目的是对person对象，调用 assign 函数</span></span><br><span class="line"> _Block_object_assign((<span class="keyword">char</span>*)dst + <span class="number">40</span>, *(<span class="keyword">void</span> * *) ((<span class="keyword">char</span>*)src + <span class="number">40</span>), <span class="number">131</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __Block_byref_id_object_dispose_131(<span class="keyword">void</span> *src) &#123;</span><br><span class="line"> _Block_object_dispose(*(<span class="keyword">void</span> * *) ((<span class="keyword">char</span>*)src + <span class="number">40</span>), <span class="number">131</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5abd730c264245d8963fee526cca3df2~tplv-k3u1fbpfcp-zoom-1.image" alt="__blcok JXPerson.png"></p>
+<p><strong>在 <code>ARC</code> 情况下</strong></p>
+<blockquote>
+<p>对<code>__block</code>都是强引用</p>
+<p>对<code>对象</code>是按照对象的修饰词<code>weak</code>和<code>strong</code>决定</p>
+<p>对<code>__block对象</code> 这种类型是怎么修饰的，应该是按照<code>__block</code> 结构体对象强引用，结构体对象内部的类对象是按照对象的<code>weak</code>和<code>assign</code>来决定引用类型</p>
+</blockquote>
+<p><strong>在<code>MRC</code>情况下</strong></p>
+<pre><code>__Block person = [Person new]
+JXBlock myBlock = ^&#123;
+    nslog(@&quot;%@&quot;,person);
+&#125;
+person 永远都是弱引用
+</code></pre>
+<h2><span id="block-xun-huan-ying-yong">block 循环应用</span><a href="#block-xun-huan-ying-yong" class="header-anchor">#</a></h2><p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f563f950361040c4bff072d019f8b672~tplv-k3u1fbpfcp-zoom-1.image" alt="循环应用.png"></p>
+<pre><code>__unsafe_unretained 对象销毁后不会置空
+__weak 对象销毁后置为nil
+</code></pre>
+<h3><span id="arc">ARC</span><a href="#arc" class="header-anchor">#</a></h3><pre><code>1.除了弱引用，还可以使用__block来解决循环引用，但是需要进行释放操作，需要调用block
+2.在block内部使用__ strong 修饰 weakSelf 的目的： 避免在使用中weakSelf释放掉，举例子： weakSelf -&gt; age 无法通过编译（解决编译器问题）
+</code></pre>
+<p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1a2048b1af7d4e8a856d8d245fe6b999~tplv-k3u1fbpfcp-zoom-1.image" alt="ARC解决循环引用.png"></p>
+<h3><span id="mrc">MRC</span><a href="#mrc" class="header-anchor">#</a></h3><p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bcc2409dbaa24f388d75b12921b227a6~tplv-k3u1fbpfcp-zoom-1.image" alt="MRC解决循环引用.png"></p>
+</p></div><div class="share"><span>Share</span>&nbsp;<span class="soc"><a href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank" class="fa fa-bookmark"></a></span><span class="soc"><a href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));" class="fa fa-weibo"></a></span><span class="soc"><a target="_blank" rel="noopener" href="http://twitter.com/home?status=http://example.com/2021/03/08/底层四：block/%20Hexo%20底层四：block" class="fa fa-twitter"></a></span></div><div class="pagination"><p class="clearfix"><span class="pre pagbuttons"><a role="navigation" href="/2021/03/08/%E5%BA%95%E5%B1%82%E4%BA%94%EF%BC%9ARuntime/" title="底层五：Runtime"><i class="fa fa-angle-double-left"></i>&nbsp;Previous post: 底层五：Runtime</a></span><span>&nbsp;</span><span class="next pagbuttons"><a role="navigation" href="/2021/03/08/%E7%BD%91%E7%BB%9C-%E5%BA%94%E7%94%A8%E5%B1%82/" title="网络应用层">Next post: 网络应用层&nbsp;<i class="fa fa-angle-double-right"></i></a></span></p></div></div></div></div><div class="visible-xs site-bottom-footer"><footer><p>&copy;&nbsp;2021&nbsp;<a target="_blank" href="http://example.com" rel="noopener noreferrer">John Doe</a></p><p>Theme&nbsp;<a target="_blank" href="https://github.com/SumiMakito/hexo-theme-typography" rel="noopener noreferrer">Typography</a>&nbsp;by&nbsp;<a target="_blank" href="https://www.keep.moe" rel="noopener noreferrer">Makito</a></p><p>Proudly published with&nbsp;<a target="_blank" href="https://hexo.io" rel="noopener noreferrer">Hexo</a></p></footer></div></div></div></div><script src="/js/jquery-3.1.0.min.js"></script><script src="/js/bootstrap.min.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script><script src="/js/google-analytics.js"></script><script src="/js/typography.js"></script></body></html>
